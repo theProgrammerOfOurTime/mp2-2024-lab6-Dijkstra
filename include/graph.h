@@ -12,7 +12,6 @@ private:
 	int vertexes_number, edges_number;
 	Vector <Vector<std::pair<int32_t, TypeWeights>>> adjList;
 	TypeWeights infinity;//в качестве бесконечности используется сумма всех ребёр +1
-	int64_t searchMin(Vector<int64_t>, Vector<bool>) const;
 	bool checkSinglyConnected() const;
 	void DFS(const int32_t& stV, Vector<bool>& used) const;
 public:
@@ -66,21 +65,6 @@ void Graph<TypeWeights>::print() const
 		}
 		std::cout << "}" << std::endl;
 	}
-}
-
-template<class TypeWeights>
-int64_t Graph<TypeWeights>::searchMin(Vector<int64_t> vertex_weight, Vector<bool> used) const
-{
-	int32_t indexMin = 0, minWeight = infinity;
-	for (int i = 1; i < vertexes_number; i++)
-	{
-		if (used[i] == false && vertex_weight[i] < minWeight)
-		{
-			indexMin = i;
-			minWeight = vertex_weight[i];
-		}
-	}
-	return indexMin;
 }
 
 template<class TypeWeights>
