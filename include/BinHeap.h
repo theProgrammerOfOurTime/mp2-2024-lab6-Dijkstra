@@ -100,4 +100,8 @@ public:
     {
         return mas[ind];
     }
+    bool empty() const noexcept
+    {
+        return  mas.length() != 0;
+    }
 };

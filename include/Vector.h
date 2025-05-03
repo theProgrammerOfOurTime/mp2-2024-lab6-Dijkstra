@@ -127,11 +127,11 @@ public:
     {
         if (newSize > capacity)
         {
-            T* tmp = new T[2 * newSize];
+            T* tmp = new T[newSize];
             std::copy(data, data + capacity, tmp);
             delete[] data;
             data = tmp;
-            capacity = 2 * newSize;
+            capacity = newSize;
         }
         size = newSize;
         return;

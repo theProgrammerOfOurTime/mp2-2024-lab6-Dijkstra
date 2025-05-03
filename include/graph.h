@@ -17,8 +17,11 @@ private:
 public:
 	Graph();
 	void input();
+	void generationGragh();
 	void print() const;
-	Vector<TypeWeights> Dijkstra(int32_t stV);
+	template<class TypeWeights, class THeap>
+	friend class Dijkstra;
+	
 };
 
 template<class TypeWeights>
@@ -34,6 +37,7 @@ void Graph<TypeWeights>::input()
 	std::cin >> vertexes_number;
 	std::cout << "enter the number of edges: ";
 	std::cin >> edges_number;
+	if (vertexes_number - 1 > edges_number) throw std::runtime_error("A graph with this number of vertices and edges is not connected.");
 	adjList.clear();
 	adjList.resize(vertexes_number);
 	for (int32_t i = 0; i < edges_number; i++)
@@ -61,7 +65,7 @@ void Graph<TypeWeights>::print() const
 		std::cout << i << ": { ";
 		for (size_t j = 0; j < adjList[i].length(); j++)
 		{
-			std::cout << adjList[i][j].first << " ";
+			std::cout << "(" << adjList[i][j].first << ", " << adjList[i][j].second << ")" << " ";
 		}
 		std::cout << "}" << std::endl;
 	}
@@ -93,29 +97,64 @@ void Graph<TypeWeights>::DFS(const int32_t& stV, Vector<bool>& used) const
 }
 
 template<class TypeWeights>
-Vector<TypeWeights> Graph<TypeWeights>::Dijkstra(int32_t stV)
+void Graph<TypeWeights>::generationGragh()
 {
-	Vector<bool> used(vertexes_number);
-	Vector<TypeWeights> weights(vertexes_number, infinity);
-	weights[stV] = 0;
-	BinHeap<myPair> bheap;
-	bheap.add(myPair(stV, 0));
-	while (bheap.size() != 0)
+	std::cout << "Enter the number of vertices: ";
+	std::cin >> vertexes_number;
+	std::cout << "enter the number of edges: ";
+	std::cin >> edges_number;
+	if (vertexes_number - 1 > edges_number) throw std::runtime_error("A graph with this number of vertices and edges is not connected.");
+	adjList.clear();
+	adjList.resize(vertexes_number);
+	//сначала будем генерировать дерево с помощью кода Прюфера, а дальше добавлять оставшиеся рёбра,
+	//в таком случае граф всегда будет односвязный при m >= n - 1, где n - число вершин, а m - число рёбер
+	srand(time(NULL));
+	Vector<size_t> codePrifer(vertexes_number - 2, 0), cntUsed(vertexes_number);
+	for (size_t i = 0; i < codePrifer.length(); i++) codePrifer[i] = rand() % vertexes_number;
+	for (size_t i = 0; i < codePrifer.length(); i++) cntUsed[codePrifer[i]]++;
+	for (size_t i = 0; i < codePrifer.length(); i++)
 	{
-		//std::cout << "heap size = " << bheap.size() << std::endl;
-		myPair minV = bheap.extructMin();
-		used[minV.v] = true;
-		for (size_t j = 0; j < adjList[minV.v].length(); j++)
+		for (size_t j = 0; j < cntUsed.length(); j++)
 		{
-			auto adjV = adjList[minV.v][j];
-			if (used[adjV.first] == true) { continue; }
-			int32_t new_weight = adjV.second + minV.w;
-			if (new_weight < weights[adjV.first])
+			if (cntUsed[j] == 0)
 			{
-				bheap.add(myPair(adjV.first, new_weight));
-				weights[adjV.first] = new_weight;
+				cntUsed[j] = -1; //вычёркиваем вершину
+				cntUsed[codePrifer[i]]--;
+				size_t w = rand();
+				infinity += w;
+				adjList[j].push_back(std::make_pair(codePrifer[i], w));
+				adjList[codePrifer[i]].push_back(std::make_pair(j, w));
+				break;
 			}
 		}
 	}
-	return weights;
+	bool fl = false;
+	size_t a, b, w = rand();
+	for (size_t i = 0; i < cntUsed.length(); i++)
+	{
+		if (cntUsed[i] == 0 && !fl)
+		{
+			a = i;
+			fl = true;
+		}
+		else if (cntUsed[i] == 0 && fl)
+		{
+			b = i;
+			break;
+		}
+	}
+	infinity += w;
+	adjList[a].push_back(std::make_pair(b, w));
+	adjList[b].push_back(std::make_pair(a, w));
+	for (size_t i = 0; i < 1 + edges_number - vertexes_number; i++)
+	{
+		a = rand() % vertexes_number;
+		b = rand() % vertexes_number;
+		w = rand();
+		infinity += w;
+		adjList[a].push_back(std::make_pair(b, w));
+		adjList[b].push_back(std::make_pair(a, w));
+	}
+	//if (!checkSinglyConnected()) throw std::runtime_error("not singly connected graph");
+	return;
 }
