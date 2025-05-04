@@ -30,14 +30,12 @@ struct myPair
 		return *this;
 	}
 	myPair() : v(-1), w(-1) { }
+	bool operator>(const myPair& p2) const
+	{ 
+		return w > p2.w;
+	}
+	bool operator<(const myPair& p2) const 
+	{ 
+		return w < p2.w; 
+	}
 };
-
-bool operator < (myPair p1, myPair p2)
-{
-	return p1.w < p2.w;
-}
-
-bool operator > (myPair p1, myPair p2)
-{
-	return p1.w > p2.w;
-}

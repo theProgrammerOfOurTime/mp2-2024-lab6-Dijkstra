@@ -12,7 +12,7 @@
 template<class TypeWeights>
 class Graph
 {
-private:
+protected:
 	int vertexes_number, edges_number;
 	Vector <Vector<std::pair<int32_t, TypeWeights>>> adjList;
 	TypeWeights infinity;//в качестве бесконечности используется сумма всех ребёр +1
@@ -25,7 +25,6 @@ public:
 	void print() const;
 	template<class TypeWeights, class THeap>
 	friend class Dijkstra;
-	
 };
 
 template<class TypeWeights>

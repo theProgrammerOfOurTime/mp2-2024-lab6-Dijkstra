@@ -5,7 +5,7 @@
 template<class TypeWeights, class THeap>
 class Dijkstra
 {
-private:
+protected:
 	Graph<TypeWeights>* g;
 	Vector<size_t> way;
 public:
