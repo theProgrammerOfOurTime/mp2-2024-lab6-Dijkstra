@@ -2,8 +2,12 @@
 
 #include <iostream>
 #include "Vector.h"
+#include <string>
 #include "myData.h"
 #include "BinHeap.h"
+#define GVDLL
+#include "..\\Graphviz\\include\\graphviz\\gvc.h"
+#include  "..\\Graphviz\\include\\graphviz\\cgraph.h"
 
 template<class TypeWeights>
 class Graph
@@ -58,7 +62,7 @@ void Graph<TypeWeights>::input()
 template<class TypeWeights>
 void Graph<TypeWeights>::print() const
 {
-	std::cout << "number of vertices = " << vertexes_number << std::endl;
+	/*std::cout << "number of vertices = " << vertexes_number << std::endl;
 	for (size_t i = 0; i < adjList.length(); i++)
 	{
 		if (adjList[i].length() == 0) continue;
@@ -68,7 +72,49 @@ void Graph<TypeWeights>::print() const
 			std::cout << "(" << adjList[i][j].first << ", " << adjList[i][j].second << ")" << " ";
 		}
 		std::cout << "}" << std::endl;
+	}*/
+	GVC_t* gv = gvContext();
+	Agraph_t* g = agopen(const_cast<char*>("g"), Agundirected, nullptr);
+	agattr(g, AGNODE, const_cast<char*>("shape"), const_cast<char*>("circle"));
+
+	Vector<Agnode_t*> nodes(vertexes_number);
+	for (size_t i = 0; i < vertexes_number; i++)
+	{
+		nodes[i] = agnode(g, const_cast<char*>(std::to_string(i).c_str()), 1);
 	}
+	//запоминаем рёбра и веса, которые уже использовали, чтобы не было дублирования
+	Vector<Vector<Vector<TypeWeights>>> usedAgedge(vertexes_number, Vector<Vector<TypeWeights>>(vertexes_number, Vector<TypeWeights>(0, TypeWeights(0))));
+	for (size_t i = 0; i < adjList.length(); i++)
+	{
+		for (size_t j = 0; j < adjList[i].length(); j++)
+		{
+			bool fl = true;
+			for (size_t k = 0; k < usedAgedge[i][adjList[i][j].first].length(); k++)
+			{
+				if (std::abs(usedAgedge[i][adjList[i][j].first][k] - adjList[i][j].second) < 1e-14)
+				{
+					fl = false;
+					break;
+				}
+			}
+			if (fl)
+			{
+				Agedge_t* e = agedge(g, nodes[i], nodes[adjList[i][j].first], nullptr, 1);
+				agsafeset(e, const_cast<char*>("label"), const_cast<char*>((std::to_string((int)adjList[i][j].second) + "." + (std::to_string((int)(adjList[i][j].second * 100) - ((int)adjList[i][j].second) * 100))).c_str()), const_cast<char*>(""));
+				usedAgedge[i][adjList[i][j].first].push_back(adjList[i][j].second);
+				usedAgedge[adjList[i][j].first][i].push_back(adjList[i][j].second);
+			}
+			
+		}
+	}
+
+	gvLayout(gv, g, "dot");
+	gvRenderFilename(gv, g, "png", "graph.png");
+	gvFreeLayout(gv, g);
+	agclose(g);
+	gvFreeContext(gv);
+	std::cout << "The graph is displayed in the graph.png" << std::endl;
+	return;
 }
 
 template<class TypeWeights>

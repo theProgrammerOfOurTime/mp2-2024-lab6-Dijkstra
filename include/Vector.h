@@ -31,8 +31,8 @@ public:
     {
         data = nullptr;
         std::swap(data, v.data);
-        capacity = v.capacity;
-        size = v.size;
+        std::swap(capacity, v.capacity);
+        std::swap(size, v.size);
     }
     Vector(Vector& v) : capacity(v.capacity), size(v.size)
     {
@@ -127,7 +127,7 @@ public:
     {
         if (newSize > capacity)
         {
-            T* tmp = new T[newSize];
+            T* tmp = new T[newSize]();
             std::copy(data, data + capacity, tmp);
             delete[] data;
             data = tmp;

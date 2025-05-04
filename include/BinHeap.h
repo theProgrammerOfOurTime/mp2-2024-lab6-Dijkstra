@@ -102,6 +102,6 @@ public:
     }
     bool empty() const noexcept
     {
-        return  mas.length() != 0;
+        return  mas.length() == 0;
     }
 };
