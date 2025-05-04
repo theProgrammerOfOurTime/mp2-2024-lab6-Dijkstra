@@ -62,8 +62,16 @@ public:
             {
                 Node* t = nodes.top();
                 nodes.pop();
-                if (t->left != nullptr) nodes.push(t->left);
-                if (t->right != nullptr) nodes.push(t->right);
+                if (t->left != nullptr)
+                {
+                    t->left->right = nullptr;
+                    nodes.push(t->left);
+                }
+                if (t->right != nullptr)
+                {
+                    t->right->left = nullptr;
+                    nodes.push(t->right);
+                }
                 if (t->child != nullptr) nodes.push(t->child);
                 delete t;
             }
@@ -181,5 +189,9 @@ public:
     bool empty() const noexcept
     {
         return size == 0;
+    }
+    size_t getSize() const noexcept
+    {
+        return size;
     }
 };
