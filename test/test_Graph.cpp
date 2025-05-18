@@ -5,7 +5,7 @@
 template<class T>
 class GraphInterface : public Graph<T>
 {
-private:
+public:
     void SetUp()
     {
         this->vertexes_number = 3;
@@ -17,7 +17,6 @@ private:
         this->adjList[1].push_back({ 2, 3 });
         this->adjList[2].push_back({ 1, 3 });
     }
-public:
     GraphInterface()
     {
         SetUp();
@@ -58,6 +57,7 @@ TEST(Graph, canCreateGraph)
 
 TEST(Graph, PrivateFieldsAccess)
 {
+    test.SetUp();
     EXPECT_EQ(test.getVertexesNumber(), 3);
     EXPECT_EQ(test.getEdgesNumber(), 2);
     EXPECT_EQ(test.getInfinity(), 9);
