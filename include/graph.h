@@ -5,9 +5,13 @@
 #include <string>
 #include "myData.h"
 #include "BinHeap.h"
+#ifdef TEST
+
 #define GVDLL
 #include "..\\Graphviz\\include\\graphviz\\gvc.h"
 #include  "..\\Graphviz\\include\\graphviz\\cgraph.h"
+
+#endif // TEST
 
 template<class TypeWeights>
 class Graph
@@ -72,6 +76,10 @@ void Graph<TypeWeights>::print() const
 		}
 		std::cout << "}" << std::endl;
 	}*/
+
+#ifdef TEST
+
+
 	GVC_t* gv = gvContext();
 	Agraph_t* g = agopen(const_cast<char*>("g"), Agundirected, nullptr);
 	agattr(g, AGNODE, const_cast<char*>("shape"), const_cast<char*>("circle"));
@@ -113,6 +121,9 @@ void Graph<TypeWeights>::print() const
 	agclose(g);
 	gvFreeContext(gv);
 	std::cout << "The graph is displayed in the graph.png" << std::endl;
+
+#endif // TEST
+
 	return;
 }
 
