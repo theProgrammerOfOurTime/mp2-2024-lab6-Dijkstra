@@ -8,6 +8,7 @@ class GraphInterface : public Graph<T>
 public:
     void SetUp()
     {
+        this->adjList.clear();
         this->vertexes_number = 3;
         this->edges_number = 2;
         this->infinity = 9;
